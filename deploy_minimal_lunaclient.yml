@@ -1,25 +1,21 @@
 ---
 - hosts: all
-  #  become: true
   vars:
     tar_lunaclient_file: /tmp/610-000401-011_SW_Linux_Luna_Minimal_Client_V10.7.1_RevA.tar
     release_version: 10.7.1-125
     deploy_lunaclient_directory: $HOME
     MIN_CLIENT_DIR: "{{ deploy_lunaclient_directory }}/LunaClient-Minimal-{{ release_version }}.x86_64"
-    #      lunaclient_installer_folder: /tmp/LunaClient_10.7.1-125_Linux/64
-    #      install_directory: "/opt/lunaclient_10.7.1"
-    #      lunaclient_components: "network backup ped"
-    #      lunaclient_apis: "sdk jsp jcprov"
-    #      non_root_user: "ec2-user"
   tasks:
 
-    - name: Install glibc.i686
-      become: true
-      yum:
-        name:
-          - glibc.i686
-        state: latest
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+#   glibc package is needed when the Minimal Luna Client needs to run the resgistration with VTL or ClientConfig on lunacm.
+#   It requires root to install the package. 
+#    - name: Install glibc.i686
+#      become: true
+#      yum:
+#        name:
+#          - glibc.i686
+#        state: latest
+#      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
     - name: Untar Luna Client installer file
       tags: untar
