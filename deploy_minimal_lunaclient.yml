@@ -1,21 +1,21 @@
 ---
 - hosts: all
   vars:
-    tar_lunaclient_file: /tmp/610-000401-011_SW_Linux_Luna_Minimal_Client_V10.7.1_RevA.tar
-    release_version: 10.7.1-125
+    tar_lunaclient_file: $HOME/610-000401-012_SW_Linux_Luna_Minimal_Client_V10.7.2_RevA.tar
+    release_version: 10.7.2-16
     deploy_lunaclient_directory: $HOME
     MIN_CLIENT_DIR: "{{ deploy_lunaclient_directory }}/LunaClient-Minimal-{{ release_version }}.x86_64"
+    client_name: "jv_boa"
   tasks:
-
-#   glibc package is needed when the Minimal Luna Client needs to run the resgistration with VTL or ClientConfig on lunacm.
-#   It requires root to install the package. 
-#    - name: Install glibc.i686
-#      become: true
-#      yum:
-#        name:
-#          - glibc.i686
-#        state: latest
-#      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+    #   glibc package is needed when the Minimal Luna Client needs to run the resgistration with VTL or ClientConfig on lunacm.
+    #   It requires root to install the package.
+    #    - name: Install glibc.i686
+    #      become: true
+    #      yum:
+    #        name:
+    #          - glibc.i686
+    #        state: latest
+    #      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
     - name: Untar Luna Client installer file
       tags: untar
@@ -36,60 +36,65 @@
         insertafter: EOF
         state: present
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
-    
-# "Update the Chrystoki.conf file paths so the tools work as expected"
-    - name: Set Chrystoki2 value - LibUNIX
-      tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s Chrystoki2 -e LibUNIX -v {{ MIN_CLIENT_DIR }}/libs/64/libCryptoki2.so"
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
+    # "Update the Chrystoki.conf file paths so the tools work as expected"
+
     - name: Set Chrystoki2 value - LibUNIX64
       tags: config
       command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s Chrystoki2 -e LibUNIX64 -v {{ MIN_CLIENT_DIR }}/libs/64/libcklog2.so"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
+    - name: Set Chrystoki2 value - LibUNIX
+      tags: config
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s Chrystoki2 -e LibUNIX -v {{ MIN_CLIENT_DIR }}/libs/64/libCryptoki2.so"
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    - name: Set Chrystoki2 value - CkLog2
+      tags: config
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s CkLog2 -e LibUNIX64 -v {{ MIN_CLIENT_DIR }}/libs/64/libCryptoki2.so"
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
     - name: Set Misc value - ToolsDir
       tags: config
       command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s Misc -e ToolsDir -v {{ MIN_CLIENT_DIR }}/bin/64"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set SSLConfigFile value
       tags: config
       command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e SSLConfigFile -v {{ MIN_CLIENT_DIR }}/openssl.cnf"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set ClientPrivKeyFile value
       tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e ClientPrivKeyFile -v {{ lookup('env', 'HOME') }}/luna-docker/config/certs/dockerlunaclientKey.pem"
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e ClientPrivKeyFile -v {{ MIN_CLIENT_DIR }}/cert/client/{{ client_name }}Key.pem"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set ClientCertFile value
       tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e ClientCertFile -v {{ lookup('env', 'HOME') }}/luna-docker/config/certs/dockerlunaclient.pem"
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e ClientCertFile -v {{ MIN_CLIENT_DIR }}/cert/client/{{ client_name }}.pem"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set ServerCAFile value
       tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e ServerCAFile -v {{ lookup('env', 'HOME') }}/luna-docker/config/certs/CAFile.pem"
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'LunaSA Client' -e ServerCAFile -v {{ MIN_CLIENT_DIR }}/cert/server/CAFile.pem"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set ClientTokenLib value
       tags: config
       command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e ClientTokenLib -v {{ MIN_CLIENT_DIR }}/libs/64/libSoftToken.so"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set SoftTokenDir value
       tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e SoftTokenDir -v {{ lookup('env', 'HOME') }}/luna-docker/config/stc/token"
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e SoftTokenDir -v {{ MIN_CLIENT_DIR }}/stc/token"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set ClientIdentitiesDir value
       tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e ClientIdentitiesDir -v {{ lookup('env', 'HOME') }}/luna-docker/config/stc/client_identities"
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e ClientIdentitiesDir -v {{ MIN_CLIENT_DIR }}/stc/client_identities"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
+
     - name: Set PartitionIdentitiesDir value
       tags: config
-      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e PartitionIdentitiesDir -v {{ lookup('env', 'HOME') }}/luna-docker/config/stc/partition_identities"
+      command: "{{ MIN_CLIENT_DIR }}/bin/64/configurator setValue -s 'Secure Trusted Channel' -e PartitionIdentitiesDir -v {{ MIN_CLIENT_DIR }}/stc/partition_identities"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
- 
