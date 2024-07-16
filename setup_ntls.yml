@@ -10,6 +10,8 @@
     partition_name: jv_boa
     hsm_user: jvaldes
     password: "Gemalto123!"
+    partition_domain: "Thales123!"
+    co_password: "Thales123"
   tasks:
     # Pre-checks to ensure Luna Client would connect to HSMs servers
     # NOTE: This script will launch lunacm and run ccfg per Minimal Luna client.
@@ -28,12 +30,4 @@
     - name: Display command result
       debug:
         msg: "{{ lunacm_deploy_result.stdout }}"
-# 2. Check conectivity to each HSM.
-
-# 3. Check all server.pem for the HSMs and Client Certs are available
-
-# Copy Certificates into LunaClient certs forlder
-
-# Register the appliance server certificate with the Client.
-
-# Test connectivity to HSMs
+# 2. Create the HA cluster on each client.
