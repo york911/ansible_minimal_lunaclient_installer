@@ -1,4 +1,9 @@
 # This script is used to setup NTLs Connection to 1 or multiple HSMs.
+# Prerequisites:
+# 1. Partition already created on each HSM
+# 2. Partition already initialized and autoactivated Policy 22 and 23 activated
+# 3. All partitions on an HA should share the same Red Domain
+# 4. All partitions on an HA should share the same CO Challenge password
 ---
 - hosts: all
   vars:
@@ -12,7 +17,7 @@
       - jv_boa
     ssh_hsm_user: jvaldes
     ssh_password: "Gemalto123!"
-    co_challenge: "Thales123"
+    co_challenge: "Thales123!"
   tasks:
     # Pre-checks to ensure Luna Client would connect to HSMs servers
     # NOTE: This script will launch lunacm and run ccfg per Minimal Luna client.
