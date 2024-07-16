@@ -7,7 +7,7 @@
       - 76.239.141.209
       - 76.239.141.210
     client_name: jv_boa
-    partition_name: jv1
+    partition_name: jv_boa
     hsm_user: jvaldes
     password: "Gemalto123!"
   tasks:
