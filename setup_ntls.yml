@@ -37,7 +37,7 @@
       register: lunacm_cluster_result
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
-    - name: Display command result
+    - name: Display command result of the cluster
       tags: cluster
       debug:
         msg: "{{ lunacm_cluster_result.stdout }}"
