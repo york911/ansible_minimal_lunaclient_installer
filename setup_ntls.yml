@@ -42,7 +42,7 @@
     # 2. Create the HA cluster using only the primary HSM serial_number
     - name: Create HA Cluster for primary HSM
       tags: cluster
-      command: ./bin/64/lunacm -q ha createGroup --serialNumber {{ primary_hsm.serial_number }} -label {{ client_name }}_ha -password {{ co_challenge }}
+      command: ./bin/64/lunacm -q ha createGroup -serialNumber {{ primary_hsm.serial_number }} -label {{ client_name }}_ha -password {{ co_challenge }}
       args:
         chdir: "{{ MIN_CLIENT_DIR }}"
       register: lunacm_cluster_result
