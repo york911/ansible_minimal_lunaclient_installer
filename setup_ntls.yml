@@ -3,7 +3,9 @@
 - hosts: all
   vars:
     MIN_CLIENT_DIR: $HOME/LunaClient-Minimal-10.7.2-16.x86_64
-    hsm_ip: 76.239.141.209
+    hsm_ips:
+      - 76.239.141.209
+      - 76.239.141.210
     client_name: jv_boa
     partition_name: jv1
     hsm_user: jvaldes
@@ -16,9 +18,10 @@
     # ./bin/64/lunacm -q clientconfig deploy -server 76.239.141.209 -client jv_boa -partition jv1 -user jvaldes -password "Gemalto123!" -v
 
     - name: Run Lunacm for Partition registration
-      command: ./bin/64/lunacm -q clientconfig deploy -server {{ hsm_ip }} -client {{ client_name }} -partition {{ partition_name }} -user {{ hsm_user }} -password {{ password }} -v
+      command: ./bin/64/lunacm -q clientconfig deploy -server {{ item }} -client {{ client_name }} -partition {{ partition_name }} -user {{ hsm_user }} -password {{ password }} -v
       args:
         chdir: "{{ MIN_CLIENT_DIR }}"
+      loop: "{{ hsm_ips}}"
       register: lunacm_deploy_result
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
