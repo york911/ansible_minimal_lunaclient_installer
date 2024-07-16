@@ -2,19 +2,35 @@
 ---
 - hosts: all
   vars:
-    MIN_CLIENT_DIR: $HOME//home/ec2-user/LunaClient-Minimal-10.7.2-16.x86_64
-    HSM_IPS: 127.0.0.1, 127.0.0.2
+    MIN_CLIENT_DIR: $HOME/LunaClient-Minimal-10.7.2-16.x86_64
+    hsm_ip: 76.239.141.209
+    client_name: jv_boa
+    partition_name: jv1
+    hsm_user: jvaldes
+    password: "Gemalto123!"
   tasks:
-# Pre-checks to ensure Luna Client would connect to HSMs servers
+    # Pre-checks to ensure Luna Client would connect to HSMs servers
+    # NOTE: This script will launch lunacm and run ccfg per Minimal Luna client.
 
-# 1. Check Lunacm and VTL configuration
+    # 1. Run lunacm with clientconfig to deploy the HSM and partition registration
+    # ./bin/64/lunacm -q clientconfig deploy -server 76.239.141.209 -client jv_boa -partition jv1 -user jvaldes -password "Gemalto123!" -v
 
+    - name: Run Lunacm for Partition registration
+      command: ./bin/64/lunacm -q clientconfig deploy -server {{ hsm_ip }} -client {{ client_name }} -partition {{ partition_name }} -user {{ hsm_user }} -password {{ password }} -v
+      args:
+        chdir: "{{ MIN_CLIENT_DIR }}"
+      register: lunacm_deploy_result
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    - name: Display command result
+      debug:
+        msg: "{{ lunacm_deploy_result.stdout }}"
 # 2. Check conectivity to each HSM.
 
 # 3. Check all server.pem for the HSMs and Client Certs are available
 
 # Copy Certificates into LunaClient certs forlder
 
-# Check or register LunaClient certs on HSMs.
+# Register the appliance server certificate with the Client.
 
 # Test connectivity to HSMs
