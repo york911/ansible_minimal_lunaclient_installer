@@ -12,7 +12,7 @@
       - ip: 76.239.141.209
         partition_name: jv0
         serial_number: 1504919209576
-      - ip: 76.239.141.216d
+      - ip: 76.239.141.216
         partition_name: jv_boa
         serial_number: 1582142134693
 
@@ -64,8 +64,8 @@
       register: lunacm_member_result
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
-    - name: Display command result of the cluster
-      tags: cluster
+    - name: Display command result of the add member
+      tags: members
       debug:
         msg: "{{ lunacm_member_result.stdout }}"
         when: lunacm_member_result.rc!= 0
