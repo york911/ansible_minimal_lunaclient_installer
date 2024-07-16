@@ -30,7 +30,7 @@
 
     # 1. Run lunacm with clientconfig to deploy the HSM and partition registration
     - name: Run Lunacm for Partition registration
-      command: ./bin/64/lunacm -q clientconfig deploy -server {{ item.ip }} -client {{ client_name }} -partition {{ item.partition_name }} -user {{ ssh_hsm_user }} -password {{ ssh_password }} -f -v
+      command: ./bin/64/lunacm -q clientconfig deploy -server {{ item.ip }} -client {{ client_name }} -partition {{ item.partition_name }} -user {{ ssh_hsm_user }} -password {{ ssh_password }} -f
       args:
         chdir: "{{ MIN_CLIENT_DIR }}"
       loop: "{{ hsm_info }}"
