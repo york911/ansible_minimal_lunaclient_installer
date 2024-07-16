@@ -7,11 +7,12 @@
       - 76.239.141.209
       - 76.239.141.216
     client_name: jv_boa
-    partition_name: jv_boa
-    hsm_user: jvaldes
-    password: "Gemalto123!"
-    partition_domain: "Thales123!"
-    co_password: "Thales123"
+    partition_name:
+      - jv_boa
+      - jv_boa
+    ssh_hsm_user: jvaldes
+    ssh_password: "Gemalto123!"
+    co_challenge: "Thales123"
   tasks:
     # Pre-checks to ensure Luna Client would connect to HSMs servers
     # NOTE: This script will launch lunacm and run ccfg per Minimal Luna client.
@@ -20,14 +21,24 @@
     # ./bin/64/lunacm -q clientconfig deploy -server 76.239.141.209 -client jv_boa -partition jv1 -user jvaldes -password "Gemalto123!" -v
 
     - name: Run Lunacm for Partition registration
-      command: ./bin/64/lunacm -q clientconfig deploy -server {{ item }} -client {{ client_name }} -partition {{ partition_name }} -user {{ hsm_user }} -password {{ password }} -f -v
+      command: ./bin/64/lunacm -q clientconfig deploy -server {{ item }} -client {{ client_name }} -partition {{ partition_name }} -user {{ ssh_hsm_user }} -password {{ ssh_password }} -f -v
       args:
         chdir: "{{ MIN_CLIENT_DIR }}"
       loop: "{{ hsm_ips}}"
       register: lunacm_deploy_result
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
+    # 2. Create the HA cluster on each client.
+    - name: Create HA Cluster for slot 0
+      tags: cluster
+      command: ./bin/64/lunacm -q ha createGroup -slot 0 -label {{ client_name }}_ha -password {{ co_challenge }}
+      args:
+        chdir: "{{ MIN_CLIENT_DIR }}"
+      register: lunacm_cluster_result
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
     - name: Display command result
+      tags: cluster
       debug:
-        msg: "{{ lunacm_deploy_result.stdout }}"
-# 2. Create the HA cluster on each client.
+        msg: "{{ lunacm_cluster_result.stdout }}"
+# 3. Add members to the cluster
