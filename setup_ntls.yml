@@ -31,4 +31,3 @@
       debug:
         msg: "{{ lunacm_deploy_result.stdout }}"
 # 2. Create the HA cluster on each client.
-ß
