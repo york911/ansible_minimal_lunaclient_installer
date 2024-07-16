@@ -29,8 +29,6 @@
     # NOTE: This script will launch lunacm and run ccfg per Minimal Luna client.
 
     # 1. Run lunacm with clientconfig to deploy the HSM and partition registration
-    # ./bin/64/lunacm -q clientconfig deploy -server 76.239.141.209 -client jv_boa -partition jv1 -user jvaldes -password "Gemalto123!" -v
-
     - name: Run Lunacm for Partition registration
       command: ./bin/64/lunacm -q clientconfig deploy -server {{ item.ip }} -client {{ client_name }} -partition {{ item.partition_name }} -user {{ ssh_hsm_user }} -password {{ ssh_password }} -f -v
       args:
@@ -57,9 +55,3 @@
       loop: "{{ secondary_hsms }}"
       register: lunacm_member_result
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
-
-    - name: Display command result of the add member
-      tags: members
-      debug:
-        msg: "{{ lunacm_member_result.stdout }}"
-        when: lunacm_member_result.rc!= 0
