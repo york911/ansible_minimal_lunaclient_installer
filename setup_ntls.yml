@@ -40,7 +40,7 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
     # 2. Create the HA cluster using only the primary HSM serial_number
-    - name: Create HA Cluster for primary HSM
+    - name: Create HA Cluster using primary HSM
       tags: cluster
       command: ./bin/64/lunacm -q ha createGroup -serialNumber {{ primary_hsm.serial_number }} -label {{ client_name }}_ha -password {{ co_challenge }}
       args:
@@ -48,14 +48,8 @@
       register: lunacm_cluster_result
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
-    - name: Display command result of the cluster
-      tags: cluster
-      debug:
-        msg: "{{ lunacm_cluster_result.stdout }}"
-        when: lunacm_cluster_result.rc!= 0
-
     # 3. Add members to the cluster
-    - name: Add partitions to the HA cluster
+    - name: Add partitions members to the HA cluster
       tags: members
       command: ./bin/64/lunacm -q ha addMember -serialNumber {{ item.serial_number }} -group {{ client_name }}_ha -password {{ co_challenge }}
       args:
