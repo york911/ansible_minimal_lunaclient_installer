@@ -2,7 +2,7 @@
 # Prerequisites:
 # 1. Partition already created on each HSM
 # 2. Partition already initialized and autoactivated Policy 22 and 23 activated
-# 3. All partitions on an HA should share the same Red Domain
+# 3. All partitions on an HA should share the same Cloning Domain (Red PED Key)
 # 4. All partitions on an HA should share the same CO Challenge password
 ---
 - hosts: all
@@ -54,4 +54,12 @@
         chdir: "{{ MIN_CLIENT_DIR }}"
       loop: "{{ secondary_hsms }}"
       register: lunacm_member_result
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    # 4. Enable HA Only
+    - name: Enable HA Only
+      tags: HAOnly
+      command: ./bin/64/lunacm -q ha HAOnly -enable
+      args:
+        chdir: "{{ MIN_CLIENT_DIR }}"
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
