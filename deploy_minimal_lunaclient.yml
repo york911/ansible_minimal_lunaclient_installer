@@ -37,6 +37,10 @@
         state: present
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
+    - name: Source .bashrc
+      command: source ~/.bashrc
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
     # "Update the Chrystoki.conf file paths so the tools work as expected"
 
     - name: Set Chrystoki2 value - LibUNIX64
