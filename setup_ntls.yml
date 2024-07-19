@@ -9,20 +9,20 @@
   vars:
     MIN_CLIENT_DIR: $HOME/LunaClient-Minimal-10.7.2-16.x86_64
     hsm_info:
-      - ip: 76.239.141.209
-        partition_name: jv_boa
-        serial_number: 1504919209578
-      - ip: 76.239.141.216
-        partition_name: jv_boa
-        serial_number: 1582142134693
+      - ip: 127.0.0.1
+        partition_name: partition_name1
+        serial_number: 1234
+      - ip: 127.0.0.2
+        partition_name: partition_name2
+        serial_number: 4321
 
     primary_hsm: "{{ hsm_info | first }}"
     secondary_hsms: "{{ hsm_info[1:] }}"
 
-    client_name: jv_boa_client
-    ssh_hsm_user: jvaldes
-    ssh_password: "Gemalto123!"
-    co_challenge: "Thales123!"
+    client_name: client_name
+    ssh_hsm_user: hsm_user
+    ssh_password: "pw"
+    co_challenge: "pw"
 
   tasks:
     # Pre-checks to ensure Luna Client would connect to HSMs servers
