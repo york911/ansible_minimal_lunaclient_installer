@@ -1,1 +1,2 @@
-ec2-user@18.217.228.246
+# user@IP for the server where Minimal Luna Client will be deployed
+user@127.0.0.1

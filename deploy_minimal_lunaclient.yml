@@ -5,7 +5,7 @@
     release_version: 10.7.2-16
     deploy_lunaclient_directory: $HOME
     MIN_CLIENT_DIR: "{{ deploy_lunaclient_directory }}/LunaClient-Minimal-{{ release_version }}.x86_64"
-    client_name: "jv_boa"
+    client_name: "client_name"
   tasks:
     #   glibc package is needed when the Minimal Luna Client needs to run the resgistration with VTL or ClientConfig on lunacm.
     #   It requires root to install the package.
